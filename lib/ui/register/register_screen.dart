@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:lynxbe_koby_project/core/consts.dart';
 import 'package:lynxbe_koby_project/core/hive/user_data_source.dart';
@@ -111,31 +112,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   style: AppTextStyle().bigTitle),
                               Image.asset(appLogo, height: 100),
                               const SizedBox(height: 24),
-                              AppTextField(
-                                hintText: "Email",
-                                controller: emailController,
-                                showError: validation['email']!,
-                                keyboard: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.next,
-                              ),
-                              AppTextField(
-                                hintText: "Password",
-                                controller: passwordController,
-                                showError: validation['password']!,
-                                checkIfPassword: true,
-                                textInputAction: TextInputAction.next,
-                              ),
-                              AppTextField(
-                                hintText: "First name",
-                                controller: fNameController,
-                                showError: validation['fname']!,
-                                textInputAction: TextInputAction.next,
-                              ),
-                              AppTextField(
-                                hintText: "Last name",
-                                controller: lNameController,
-                                showError: validation['lname']!,
-                              ),
+                              kIsWeb
+                                  ? Row(
+                                      children: authTextFields
+                                          .map((e) => Expanded(child: e))
+                                          .toList())
+                                  : Column(children: authTextFields),
+                              kIsWeb
+                                  ? Row(
+                                      children: detailsTextFields
+                                          .map((e) => Expanded(child: e))
+                                          .toList())
+                                  : Column(children: detailsTextFields),
                               appButton(
                                 text: "Register with email",
                                 leftIcon: socialIcons(icon: SocialIcons.email),
@@ -152,23 +140,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   }
                                 },
                               ),
-                              const SizedBox(height: 24),
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: kheasydevDivider(black: true)),
-                                  const Text("Or register with"),
-                                  Expanded(
-                                      child: kheasydevDivider(black: true)),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              appButton(
-                                text: "Register with Google",
-                                leftIcon: socialIcons(),
-                                onTap: () => bloc.add(
-                                    const RegisterScreenEvent.signInByGoogle()),
-                              ),
+                              if (!kIsWeb) ...[
+                                const SizedBox(height: 24),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: kheasydevDivider(black: true)),
+                                    const Text("Or register with"),
+                                    Expanded(
+                                        child: kheasydevDivider(black: true)),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                appButton(
+                                  text: "Register with Google",
+                                  leftIcon: socialIcons(),
+                                  onTap: () => bloc.add(
+                                      const RegisterScreenEvent
+                                          .signInByGoogle()),
+                                ),
+                              ]
                             ],
                           ),
                         ),
@@ -184,6 +175,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+
+  List<Widget> get detailsTextFields {
+    return [
+      AppTextField(
+        hintText: "First name",
+        controller: fNameController,
+        showError: validation['fname']!,
+        textInputAction: TextInputAction.next,
+      ),
+      AppTextField(
+        hintText: "Last name",
+        controller: lNameController,
+        showError: validation['lname']!,
+      ),
+    ];
+  }
+
+  List<Widget> get authTextFields {
+    return [
+      AppTextField(
+        hintText: "Email",
+        controller: emailController,
+        showError: validation['email']!,
+        keyboard: TextInputType.emailAddress,
+        textInputAction: TextInputAction.next,
+      ),
+      AppTextField(
+        hintText: "Password",
+        controller: passwordController,
+        showError: validation['password']!,
+        checkIfPassword: true,
+        textInputAction: TextInputAction.next,
+      ),
+    ];
   }
 
   Text noAccountText(RegisterScreenBloc bloc) {

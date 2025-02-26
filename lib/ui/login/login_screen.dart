@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:lynxbe_koby_project/core/consts.dart';
 import 'package:lynxbe_koby_project/core/hive/user_data_source.dart';
@@ -104,18 +105,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                   style: AppTextStyle().bigTitle),
                               Image.asset(appLogo, height: 200),
                               const SizedBox(height: 24),
-                              AppTextField(
-                                hintText: "Email",
-                                controller: emailController,
-                                showError: validation['email']!,
-                                keyboard: TextInputType.emailAddress,
-                              ),
-                              AppTextField(
-                                hintText: "Password",
-                                controller: passwordController,
-                                showError: validation['password']!,
-                                checkIfPassword: true,
-                              ),
+                              kIsWeb
+                                  ? Row(
+                                      children: textFields
+                                          .map((e) => Expanded(child: e))
+                                          .toList())
+                                  : Column(children: textFields),
                               appButton(
                                 text: "Login with email",
                                 leftIcon: socialIcons(icon: SocialIcons.email),
@@ -129,23 +124,25 @@ class _LoginScreenState extends State<LoginScreen> {
                                   }
                                 },
                               ),
-                              const SizedBox(height: 24),
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: kheasydevDivider(black: true)),
-                                  const Text("Or login with"),
-                                  Expanded(
-                                      child: kheasydevDivider(black: true)),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              appButton(
-                                text: "Login with Google",
-                                leftIcon: socialIcons(),
-                                onTap: () => bloc.add(
-                                    const LoginScreenEvent.signInByGoogle()),
-                              ),
+                              if (!kIsWeb) ...[
+                                const SizedBox(height: 24),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: kheasydevDivider(black: true)),
+                                    const Text("Or login with"),
+                                    Expanded(
+                                        child: kheasydevDivider(black: true)),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                appButton(
+                                  text: "Login with Google",
+                                  leftIcon: socialIcons(),
+                                  onTap: () => bloc.add(
+                                      const LoginScreenEvent.signInByGoogle()),
+                                ),
+                              ]
                             ],
                           ),
                         ),
@@ -161,6 +158,23 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  List<Widget> get textFields {
+    return [
+      AppTextField(
+        hintText: "Email",
+        controller: emailController,
+        showError: validation['email']!,
+        keyboard: TextInputType.emailAddress,
+      ),
+      AppTextField(
+        hintText: "Password",
+        controller: passwordController,
+        showError: validation['password']!,
+        checkIfPassword: true,
+      ),
+    ];
   }
 
   Text noAccountText(LoginScreenBloc bloc) {
