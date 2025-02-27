@@ -67,7 +67,6 @@ class LoginScreenBloc extends Bloc<LoginScreenEvent, LoginScreenState> {
   Future<void> signInByEmailPassword(
       SignInByEmailPassword e, Emitter<LoginScreenState> emit) async {
     emit(const LoginScreenState.loading());
-    // final userCredential = await loginWithEmailAndPassword(e.email, e.password);
     final userCredential =
         await authRepository.loginWithEmailAndPassword(e.email, e.password);
     if (userCredential != null) {
