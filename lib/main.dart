@@ -2,11 +2,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lynxbe_koby_project/core/hive/adapters_controller.dart';
-import 'package:lynxbe_koby_project/core/hive/user_data_source.dart';
+import 'package:lynxbe_koby_project/core/adapters/adapters_controller.dart';
+import 'package:lynxbe_koby_project/data/datasources/auth_remote_data_source.dart';
+import 'package:lynxbe_koby_project/data/datasources/firestore_remote_data_source.dart';
+import 'package:lynxbe_koby_project/data/datasources/user_data_source.dart';
+import 'package:lynxbe_koby_project/data/repositories_impl/auth_repository_impl.dart';
+import 'package:lynxbe_koby_project/data/repositories_impl/firestore_repository_impl.dart';
+import 'package:lynxbe_koby_project/data/repositories_impl/user_repository_impl.dart';
+import 'package:lynxbe_koby_project/domain/repositories/auth_repository.dart';
+import 'package:lynxbe_koby_project/domain/repositories/firestore_repository.dart';
+import 'package:lynxbe_koby_project/domain/repositories/user_repository.dart';
 import 'package:lynxbe_koby_project/firebase_options.dart';
-import 'package:lynxbe_koby_project/services/life_cycle_manager.dart';
-import 'package:lynxbe_koby_project/ui/login/login_screen.dart';
+import 'package:lynxbe_koby_project/presentation/pages/login_screen.dart';
+import 'package:lynxbe_koby_project/presentation/widgets/general/lifecycle_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -30,8 +38,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => UserDataSource(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<UserDataSource>(
+          create: (context) => UserDataSource(),
+        ),
+        RepositoryProvider<FirestoreRemoteDataSource>(
+          create: (context) => FirestoreRemoteDataSource(),
+        ),
+        RepositoryProvider<FirestoreRepository>(
+          create: (context) => FirestoreRepositoryImpl(
+            context.read<FirestoreRemoteDataSource>(),
+          ),
+        ),
+        RepositoryProvider<UserRepository>(
+          create: (context) => UserRepositoryImpl(
+            context.read<UserDataSource>(),
+            context.read<FirestoreRepository>(),
+          ),
+        ),
+        RepositoryProvider<AuthRemoteDataSource>(
+          create: (context) => AuthRemoteDataSource(),
+        ),
+        RepositoryProvider<AuthRepository>(
+          create: (context) => AuthRepositoryImpl(
+            context.read<AuthRemoteDataSource>(),
+          ),
+        ),
+      ],
       child: LifecycleManager(
         child: MaterialApp(
           navigatorKey: NavigationContextService.navigatorKey,
