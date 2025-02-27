@@ -5,7 +5,7 @@ import 'package:lynxbe_koby_project/core/theme/text_styles.dart';
 import 'package:lynxbe_koby_project/data/datasources/user_data_source.dart';
 import 'package:lynxbe_koby_project/domain/repositories/auth_repository.dart';
 import 'package:lynxbe_koby_project/domain/repositories/user_repository.dart';
-import 'package:lynxbe_koby_project/presentation/bloc/login_bloc/login_screen_bloc.dart';
+import 'package:lynxbe_koby_project/presentation/bloc/authentication/login_bloc/login_screen_bloc.dart';
 import 'package:lynxbe_koby_project/presentation/pages/home_screen.dart';
 import 'package:lynxbe_koby_project/presentation/pages/register_screen.dart';
 import 'package:lynxbe_koby_project/presentation/widgets/design/buttons/app_button.dart';
